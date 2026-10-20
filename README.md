@@ -4,7 +4,7 @@ Herramienta local en Python que registra tus gastos automáticamente a partir de
 
 *A local Python tool that builds an expense log from your bank's email alerts (Gmail) and statements, with no manual entry. Rules extract the amounts; a local model via Ollama will handle categorisation and reports. Nothing leaves your computer.*
 
-> Estado: en desarrollo. Ya funciona la descarga de correos, la extracción de movimientos y los reportes en Excel. Faltan los estados de cuenta en PDF, el categorizador, el panel web y el agente de análisis.
+> Estado: en desarrollo. Ya funciona la descarga de correos, la extracción de movimientos y el reporte mensual. Faltan los estados de cuenta en PDF, el categorizador con IA local, el panel web y el agente de análisis.
 
 ## Cómo funciona
 
@@ -54,14 +54,23 @@ python sincronizar_gmail.py --credenciales "C:\ruta\a\client_secret.json" --cons
 REM 3) Sacar los movimientos y generar movimientos.xlsx
 python procesar_correos.py
 
-REM 4) Ejemplos anonimizados (dígitos a 9, nombres tapados) para diseñar lectores nuevos
+REM 4) Reporte mensual en Markdown (Obsidian): el mes actual, un mes, o todos
+python reporte.py
+python reporte.py --mes 2026-09
+python reporte.py --todos --obsidian "C:\ruta\a\boveda\Control de gastos\Reportes"
+
+REM 5) Ejemplos anonimizados (dígitos a 9, nombres tapados) para diseñar lectores nuevos
 python muestras_anonimas.py --ocultar "Nombre,Apellido1,Apellido2"
 
-REM 5) Pruebas
+REM 6) Pruebas
 python -m pytest tests
 ```
 
-Atajo: `actualizar.bat` en la raíz hace los pasos 2 y 3 con doble clic. Toma la ruta del JSON de la variable de entorno `CREDENCIALES`, que se configura una vez con `setx CREDENCIALES "C:\ruta\a\client_secret.json"`.
+Atajo: `actualizar.bat` en la raíz hace los pasos 2, 3 y 4 con doble clic. Toma la ruta del JSON de la variable de entorno `CREDENCIALES`, que se configura una vez con `setx CREDENCIALES "C:\ruta\a\client_secret.json"`. Si además se define `OBSIDIAN_REPORTES`, copia los reportes a esa carpeta.
+
+## Reporte mensual
+
+`reporte.py` genera una nota `Reporte AAAA-MM.md` por mes con la misma estructura siempre: resumen con comparación contra los mismos días del mes anterior, gasto por categoría, tendencia, gastos hormiga, cobros recurrentes, hábitos, recomendaciones y calidad de los datos. Las transferencias entre cuentas propias se detectan y no se cuentan como gasto. Categorías, tipos de cambio y umbrales se ajustan en [`config/reporte.toml`](config/reporte.toml). El reporte no incluye números de cuenta, tarjetas, autorizaciones, referencias ni nombres de personas.
 
 ## Estructura
 
@@ -72,6 +81,7 @@ Atajo: `actualizar.bat` en la raíz hace los pasos 2 y 3 con doble clic. Toma la
 | `scripts/extractores.py` | Lectores puros por banco que devuelven un `Movimiento`. |
 | `scripts/configuracion.py` | Carga y valida `config/bancos.toml`. |
 | `scripts/procesar_correos.py` | Aplica los lectores y genera las tablas y el Excel de resultados. |
+| `scripts/reporte.py` | Reporte mensual en Markdown con categorías, gastos hormiga, cobros recurrentes y hábitos. |
 | `scripts/muestras_anonimas.py`, `scripts/muestras_pdf.py` | Muestras anonimizadas de correos y de PDF. |
 | `scripts/tests/` | Pruebas con pytest sobre correos de ejemplo inventados. |
 
@@ -83,7 +93,7 @@ Atajo: `actualizar.bat` en la raíz hace los pasos 2 y 3 con doble clic. Toma la
 
 1. Lector de estados de cuenta en PDF (validando saldo inicial + movimientos = saldo final).
 2. Conciliación entre estado de cuenta y alertas de correo.
-3. Categorizador: reglas comercio→categoría, con Ollama local como respaldo.
+3. Categorizador con Ollama local para los comercios que las reglas de `config/reporte.toml` no cubren.
 4. Panel local en Streamlit y agente de análisis de hábitos.
 
 ## Licencia
