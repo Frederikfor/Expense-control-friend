@@ -32,6 +32,7 @@ from leer_mbox import CARPETA_DATOS, carpeta_de_corrida, iniciar_log
 
 RUTA_CONFIG = Path(__file__).resolve().parents[1] / "config" / "reporte.toml"
 SIN_CATEGORIA = "Sin categoría"
+POR_REVISAR = "Por revisar"
 TRANSFERENCIAS = "Transferencias"
 DIAS = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
 CLAVES_REPORTE = ("ventana_transferencia_propia", "excluir_del_gasto", "umbral_hormiga", "min_compras_hormiga",
@@ -59,6 +60,12 @@ def cargar_config(ruta=RUTA_CONFIG):
     if not datos.get("tipos_cambio", {}).get("USD"):
         raise ErrorConfigReporte(f"{ruta.name}: falta USD en [tipos_cambio]")
     datos.setdefault("categorias_por_tipo", {})
+    vistas = {}
+    for grupo, cats in datos.setdefault("grupos", {}).items():
+        for cat in cats:
+            if cat in vistas:
+                raise ErrorConfigReporte(f"{ruta.name}: '{cat}' esta en los grupos '{vistas[cat]}' y '{grupo}'")
+            vistas[cat] = grupo
     return datos
 
 
@@ -93,6 +100,14 @@ def categorizar(tipo, comercio, config):
         if any(coincide(p, nombre) for p in cat["palabras"]):
             return cat["nombre"]
     return SIN_CATEGORIA
+
+
+def grupo_de(categoria, config):
+    """Grupo de [grupos] al que pertenece la categoria; las que no estan quedan "Por revisar"."""
+    for grupo, cats in config["grupos"].items():
+        if categoria in cats:
+            return grupo
+    return POR_REVISAR
 
 
 def en_colones(monto, moneda, config):
@@ -272,6 +287,9 @@ def metricas(df, mes, hoy, config):
     hormiga = detectar_hormiga(gastos, config)
     por_cat = gastos.groupby("categoria")["monto_crc"].sum().sort_values(ascending=False)
     por_cat_prev = gastos_prev.groupby("categoria")["monto_crc"].sum()
+
+    def por_grupo(datos):
+        return datos.groupby(datos["categoria"].map(lambda c: grupo_de(c, config)))["monto_crc"].sum()
     gasto = gastos["monto_crc"].sum()
     hasta_mes = df[(df["direccion"] == "salida") & (df["mes"] <= mes) & ~df["categoria"].isin(excluir)]
 
@@ -292,6 +310,7 @@ def metricas(df, mes, hoy, config):
         "hormiga_prev": detectar_hormiga(gastos_prev, config)["total"].sum(),
         "hormiga_mensual": hormiga["total"].sum() / dias * dias_mes if dias else 0,
         "por_categoria": por_cat,
+        "por_grupo": por_grupo(gastos).sort_values(ascending=False), "por_grupo_prev": por_grupo(gastos_prev),
         "cambios_categoria": {c: (por_cat_prev.get(c, 0), v) for c, v in por_cat.items()},
         "sin_categoria": por_cat.get(SIN_CATEGORIA, 0) / gasto if gasto else 0,
         "suscripciones": detectar_suscripciones(hasta_mes, mes, config),
@@ -347,6 +366,9 @@ def generar_markdown(m, calidad, config, fuente, hoy, corte=None):
         for c, v in cats.items():
             antes = m["cambios_categoria"][c][0]
             l.append(f"| {c} | {colones(v)} | {v / m['gasto']:.0%} | {cambio(v, antes)} |")
+        l += ["", "| Grupo | Gasto | % | Cambio |", "|---|---|---|---|"]
+        for g, v in m["por_grupo"].items():
+            l.append(f"| {g} | {colones(v)} | {v / m['gasto']:.0%} | {cambio(v, m['por_grupo_prev'].get(g, 0))} |")
     if len(m["tendencia"]) >= 2:
         meses = ", ".join(f'"{x}"' for x in m["tendencia"].index)
         valores = ", ".join(f"{v / 1000:.0f}" for v in m["tendencia"].values)

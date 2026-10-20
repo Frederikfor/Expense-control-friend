@@ -11,9 +11,9 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from reporte import (SIN_CATEGORIA, cambio, cargar_config, categorizar, colones, detectar_hormiga,  # noqa: E402
-                     detectar_suscripciones, generar_markdown, marcar_transferencias_propias, metricas,
-                     nombre_comercio, preparar)
+from reporte import (POR_REVISAR, SIN_CATEGORIA, ErrorConfigReporte, cambio, cargar_config,  # noqa: E402
+                     categorizar, colones, detectar_hormiga, detectar_suscripciones, generar_markdown, grupo_de,
+                     marcar_transferencias_propias, metricas, nombre_comercio, preparar)
 
 CONFIG = cargar_config()
 
@@ -30,7 +30,7 @@ def tabla(*filas):
 
 def test_categorias_por_palabra_y_por_tipo():
     assert categorizar("compra", "UBER EATS PENDING", CONFIG) == "Comida a domicilio"
-    assert categorizar("compra", "UBER TRIP", CONFIG) == "Transporte"
+    assert categorizar("compra", "UBER TRIP", CONFIG) == "Transporte por app"
     assert categorizar("compra", "Café Britt", CONFIG) == "Café y panadería"  # sin importar tildes
     assert categorizar("sinpe_enviado", None, CONFIG) == "Transferencias"
     assert categorizar("compra", "COMERCIO DESCONOCIDO", CONFIG) == SIN_CATEGORIA
@@ -39,6 +39,36 @@ def test_categorias_por_palabra_y_por_tipo():
 def test_siglas_cortas_solo_como_palabra_completa():
     assert categorizar("compra", "UE COSTA RICA", CONFIG) == "Comida a domicilio"
     assert categorizar("compra", "BUENA VISTA", CONFIG) == SIN_CATEGORIA  # "UE" dentro de BUENA no cuenta
+
+
+def test_orden_de_categorias_evita_choques():
+    assert categorizar("compra", "DELTA 0061234567890", CONFIG) == "Viajes"  # aerolinea
+    assert categorizar("compra", "DELTA CENTRO", CONFIG) == "Combustible"  # gasolinera
+    assert categorizar("compra", "CARLS JR 123", CONFIG) == "Restaurantes y comida rápida"
+    assert categorizar("compra", "PANADERIA CENTRO METROPOLITANO", CONFIG) == "Café y panadería"
+    assert categorizar("compra", "GLOBAL VIA RUTA 27", CONFIG) == "Peajes, parqueo y transporte público"
+    assert categorizar("compra", "BARBER SHOP CENTRAL", CONFIG) == "Cuidado personal"
+
+
+def test_cada_categoria_tiene_un_grupo():
+    assert grupo_de("Supermercado", CONFIG) == "Necesidades"
+    assert grupo_de("Restaurantes y comida rápida", CONFIG) == "Gustos"
+    assert grupo_de(SIN_CATEGORIA, CONFIG) == POR_REVISAR
+    for cat in CONFIG["categorias"]:
+        assert grupo_de(cat["nombre"], CONFIG) != POR_REVISAR, cat["nombre"]
+
+
+def test_categoria_repetida_en_dos_grupos_es_error(tmp_path):
+    texto = (Path(__file__).resolve().parents[2] / "config" / "reporte.toml").read_text(encoding="utf-8")
+    ruta = tmp_path / "reporte.toml"
+    ruta.write_text(texto.replace('"Iglesia y donaciones" = ["Iglesia y donaciones"]',
+                                  '"Iglesia y donaciones" = ["Iglesia y donaciones", "Salud"]'), encoding="utf-8")
+    try:
+        cargar_config(ruta)
+    except ErrorConfigReporte as error:
+        assert "Salud" in str(error)
+    else:
+        raise AssertionError("se esperaba ErrorConfigReporte")
 
 
 def test_prefijo_del_procesador_se_une_a_la_ciudad():
@@ -66,7 +96,7 @@ def test_hormiga_agrupa_compras_pequenas_por_categoria():
                         *[mov(f"2026-09-{d:02d}", 2500, comercio="DLC", ciudad="DIDI") for d in range(4, 6)],
                         mov("2026-09-10", 80000, comercio="UBER")), CONFIG)  # grande: no es hormiga
     h = detectar_hormiga(df, CONFIG)
-    assert list(h["categoria"]) == ["Transporte"]
+    assert list(h["categoria"]) == ["Transporte por app"]
     assert (h["compras"].iloc[0], h["total"].iloc[0], h["principal"].iloc[0]) == (5, 14000, "UBER")
 
 
@@ -90,6 +120,7 @@ def test_reporte_no_incluye_tarjetas_ni_autorizaciones_ni_referencias():
     texto = generar_markdown(metricas(df, "2026-09", datetime(2026, 10, 1), CONFIG), "100%", CONFIG, "prueba",
                              datetime(2026, 10, 1))
     assert "# Reporte 2026-09" in texto and "[[Reporte 2026-08]]" in texto
+    assert "| Peajes, parqueo y transporte público |" not in texto and "| Gustos |" in texto
     for dato in ("4455", "998877", "528512345678"):
         assert dato not in texto
 

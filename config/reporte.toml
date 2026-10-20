@@ -34,15 +34,20 @@ debito_cuenta = "Débitos de cuenta"
 
 # Categorias por palabras en el nombre del comercio (sin importar mayusculas ni tildes).
 # Las palabras de 4 letras o menos tienen que aparecer como palabra completa ("UE" no choca con "BUEN").
-# La primera categoria que coincide gana, asi que las mas especificas van primero.
+# La primera categoria que coincide gana, asi que las mas especificas van primero
+# (ej. "Viajes" va antes de "Combustible" para que la aerolinea Delta no cuente como gasolinera).
 [[categorias]]
 nombre = "Comida a domicilio"
 palabras = ["UBER EATS", "UBEREATS", "UE", "RAPPI", "PEDIDOSYA", "DIDI FOOD"]
 
 [[categorias]]
-nombre = "Transporte"
-palabras = ["UBER", "UBR", "DIDI", "INDRIVE", "PARQUEO", "PARKING", "PARQUIMETRO", "PEAJE", "QUICKPASS",
-            "GLOBALVIA", "GLOBAL VIA", "VENTRA", "METRA", "SUICA", "JR", "MTA", "LYFT"]
+nombre = "Transporte por app"
+palabras = ["UBER", "UBR", "DIDI", "INDRIVE", "LYFT", "CABIFY"]
+
+[[categorias]]
+nombre = "Peajes, parqueo y transporte público"
+palabras = ["PARQUEO", "PARKING", "PARQUIMETRO", "PEAJE", "QUICKPASS", "GLOBALVIA", "GLOBAL VIA", "VENTRA",
+            "METRA", "SUICA", "JR EAST", "JR WEST", "JR CENTRAL", "MTA", "TREN"]
 
 [[categorias]]
 nombre = "Suscripciones"
@@ -51,35 +56,67 @@ palabras = ["NETFLIX", "SPOTIFY", "APPLE.COM", "ITUNES", "GOOGLE", "YOUTUBE", "D
             "PLAYSTATION", "XBOX", "STEAM", "CRUNCHYROLL", "ICLOUD"]
 
 [[categorias]]
+nombre = "Viajes"
+palabras = ["AIRLINES", "AIRWAYS", "AMERICAN AIR", "COPA AIR", "COPA", "AVIANCA", "SOUTHWES", "UNITED",
+            "DELTA AIR", "DELTA 00", "HOTEL", "AIRBNB", "BOOKING", "EXPEDIA", "AEROPUERTO", "AIRPORT"]
+
+[[categorias]]
+nombre = "Vitaminas y suplementos"
+palabras = ["AMWAY", "GNC", "HERBALIFE", "VITAMINA", "SUPLEMENTO"]
+
+[[categorias]]
 nombre = "Supermercado"
 palabras = ["AUTOMERCADO", "AUTO MERCADO", "MAS X MENOS", "MASXMENOS", "WALMART", "WAL-MART", "PALI",
-            "MEGASUPER", "FRESH MARKET", "PRICESMART", "SUPER", "PERIMERCADOS", "VINDI", "AMPM", "AM PM", "MAXIPALI", "TARGET",
-            "MITSUWA", "COOPEATENAS", "MERCADO", "MARKET"]
+            "MEGASUPER", "FRESH MARKET", "PRICESMART", "PRICE SMART", "SUPER", "PERIMERCADOS", "VINDI", "AMPM",
+            "AM PM", "MAXIPALI", "TARGET", "MITSUWA", "COOPEATENAS", "MERCADO", "MARKET", "PUBLIX", "OXXO",
+            "D1", "PROXIMART", "PULPERIA", "JEWEL OSCO"]
 
 [[categorias]]
 nombre = "Café y panadería"
 palabras = ["STARBUCKS", "CAFE", "COFFEE", "BRITT", "SPOON", "SAINT HONORE", "TOSTADOR", "MUSMANNI",
-            "PANADERIA", "KRISPY", "DONUT", "AMORINO"]
+            "PANADERIA", "KRISPY", "DONUT", "AMORINO", "BAKERY", "BREAD", "JUAN VALDEZ", "HELADERIA", "HAAGEN",
+            "CINNABON", "POPS"]
 
 [[categorias]]
 nombre = "Restaurantes y comida rápida"
-palabras = ["MCDONALDS", "MC DONALDS", "KFC", "SUBWAY", "BURGER", "PIZZA", "TACO", "POPS", "RESTAURANT",
+palabras = ["MCDONALDS", "MC DONALDS", "MCDONALD", "KFC", "SUBWAY", "BURGER", "PIZZA", "TACO", "RESTAURANT",
             "SODA", "WENDYS", "CHURCHS", "POLLO", "SUSHI", "BAR", "COMEDOR", "FOOD", "GRILL", "KITCHEN",
-            "CHILIS", "HUARACHES", "SATAY", "TST"]
+            "CHILIS", "HUARACHES", "SATAY", "TST", "CARLS JR", "FRISBY", "CHICK-FIL", "JOHNNY ROCKETS",
+            "PAPA JOHNS", "SHAWARMA", "KEBAB", "TRATTORIA", "HAMBUR", "GYROS", "NOODLES", "CHILI'S",
+            "OUTBACK", "ITALIAN"]
+
+[[categorias]]
+nombre = "Licores"
+palabras = ["LICORERA", "LICORES", "LICOR"]
 
 [[categorias]]
 nombre = "Combustible"
-palabras = ["SERVICENTRO", "GASOLINERA", "DELTA", "ESTACION DE SERVICIO", "UNO", "PUMA", "GAZEL", "LOVES",
-            "SHELL", "EXXON", "CHEVRON"]
+palabras = ["SERVICENTRO", "GASOLINERA", "DELTA", "ESTACION DE SERVICIO", "ESTACION DE SERV", "UNO", "PUMA",
+            "GAZEL", "LOVES", "SHELL", "EXXON", "CHEVRON"]
 
 [[categorias]]
 nombre = "Vehículo y seguros"
-palabras = ["MARCHAMO", "RITEVE", "SEGURO", "INS", "TALLER", "LLANTA"]
+palabras = ["MARCHAMO", "RITEVE", "DEKRA", "SEGURO", "INS", "TALLER", "LLANTA", "AUTOMOTRIZ", "REPUESTO",
+            "LAVACAR", "CAR WASH", "COMPRESOR", "MULTAS"]
 
 [[categorias]]
 nombre = "Salud"
 palabras = ["FARMACIA", "FARMA", "PHARMACY", "CVS", "WALGREENS", "FISCHEL", "SUCRE", "CLINICA", "HOSPITAL",
-            "LABORATORIO", "OPTICA", "DENTAL"]
+            "LABORATORIO", "LABIN", "OPTICA", "DENTAL", "ODONTO", "DROGUERIA", "MEDIC", "DR", "DRA"]
+
+[[categorias]]
+nombre = "Cuidado personal"
+palabras = ["BARBER", "BARBERIA", "PELUQUERIA", "ESTETICA", "CORTE DE PELO", "SALON DE BELLEZA", "SPA",
+            "PERFUME"]
+
+[[categorias]]
+nombre = "Educación y deporte"
+palabras = ["GYM", "GIMNASIO", "SMART FIT", "FITNESS", "NATACION", "CURSO", "CLASES", "ACADEMIA", "SAXOFON",
+            "GUITARRA", "PADEL"]
+
+[[categorias]]
+nombre = "Iglesia y donaciones"
+palabras = ["IGLESIA", "DIEZMO", "OFRENDA", "PROTEMPLO", "TEMPLO"]
 
 [[categorias]]
 nombre = "Servicios del hogar"
@@ -87,7 +124,8 @@ palabras = ["KOLBI", "ICE", "CNFL", "ACUEDUCTOS", "TIGO", "CLARO", "LIBERTY", "T
 
 [[categorias]]
 nombre = "Hogar y ferretería"
-palabras = ["FERRETERIA", "EPA", "CONSTRUPLAZA", "PEQUENO MUNDO", "LAUNDRY", "IKEA", "HOME DEPOT"]
+palabras = ["FERRETERIA", "EPA", "CONSTRUPLAZA", "PEQUENO MUNDO", "LAUNDRY", "IKEA", "HOME DEPOT", "LIMPIEZA",
+            "CLEAN", "DOLLARCITY"]
 
 [[categorias]]
 nombre = "Tecnología"
@@ -97,7 +135,8 @@ palabras = ["BEST BUY", "SAMSUNG", "RADIOSHACK", "ICON", "APPLE STORE", "GOLLO",
 nombre = "Ropa y tiendas"
 palabras = ["ROSS", "COACH", "BURLINGTON", "T J MAXX", "TJ MAXX", "MARSHALLS", "PRIMARK", "BERSHKA",
             "PULL AND BEAR", "ZARA", "H&M", "NIKE", "ADIDAS", "EXPRESS", "ALUPA", "EKONO", "OUTLET",
-            "FACTORY STORE", "BARNES", "DECATHLON", "SEPHORA", "LIBRERIA", "OFFICE DEPOT"]
+            "FACTORY STORE", "BARNES", "DECATHLON", "SEPHORA", "LIBRERIA", "OFFICE DEPOT", "UNIQLO", "KOAJ",
+            "DOLLAR TREE", "FIVE BELOW", "MINISO", "BEAUTY"]
 
 [[categorias]]
 nombre = "Compras en línea"
@@ -106,9 +145,15 @@ palabras = ["AMAZON", "AMZN", "ASOS", "ALIEXPRESS", "TEMU", "SHEIN", "EBAY", "PA
 [[categorias]]
 nombre = "Entretenimiento"
 palabras = ["ESTADIO", "SUMMIT", "PLANETARIUM", "NAVY PIER", "MUSEUM", "MUSEO", "CINE", "CINEMA", "TICKET",
-            "TEATRO", "CONCIERTO", "PARK", "PARQUE DIVERSIONES"]
+            "TEATRO", "CONCIERTO", "PARK", "PARQUE DIVERSIONES", "MULTIPLEX"]
 
-[[categorias]]
-nombre = "Viajes"
-palabras = ["AIRLINES", "AIRWAYS", "AMERICAN AIR", "COPA", "AVIANCA", "SOUTHWES", "UNITED", "DELTA AIR",
-            "HOTEL", "AIRBNB", "BOOKING", "EXPEDIA", "AEROPUERTO", "AIRPORT"]
+# Grupos para leer el gasto de un vistazo. Cada categoria va en un solo grupo;
+# las que no aparecen aqui caen en "Por revisar".
+[grupos]
+"Necesidades" = ["Supermercado", "Combustible", "Peajes, parqueo y transporte público", "Salud",
+                 "Vehículo y seguros", "Servicios del hogar", "Cuidado personal"]
+"Gustos" = ["Restaurantes y comida rápida", "Café y panadería", "Comida a domicilio", "Licores", "Ropa y tiendas",
+            "Entretenimiento", "Tecnología", "Compras en línea", "Transporte por app"]
+"Compromisos mensuales" = ["Suscripciones", "Educación y deporte", "Vitaminas y suplementos"]
+"Iglesia y donaciones" = ["Iglesia y donaciones"]
+"Grandes y únicos" = ["Viajes", "Hogar y ferretería"]
