@@ -1,0 +1,27 @@
+# Datos financieros y credenciales: NUNCA al repositorio
+datos/
+estados de cuenta/
+respaldo_*/
+*.mbox
+*.sqlite
+*.sqlite3
+*.db
+*.xlsx
+*.pdf
+*.xml
+*.log
+client_secret*.json
+credentials*.json
+token*.json
+muestras*.txt
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Editor
+.vscode/
+.idea/

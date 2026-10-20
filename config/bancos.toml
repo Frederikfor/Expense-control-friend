@@ -1,0 +1,85 @@
+# Datos de los bancos y del idioma que usan los extractores.
+# Para agregar un banco, un dominio nuevo o una palabra, se edita este archivo,
+# no el codigo. Se valida al cargar (configuracion.py): si algo falta o esta
+# repetido, el programa se detiene con un mensaje claro.
+
+# ----------------------------------------------------------------------------
+# Bancos y sus dominios oficiales. Un correo de otro dominio nunca se procesa.
+# Los nombres viejos cuentan como el mismo banco: son las mismas tarjetas y cuentas.
+# Un dominio no puede estar en dos bancos.
+# ----------------------------------------------------------------------------
+[bancos.BAC]
+dominios = [
+    "baccredomatic.cr",
+    "notificacionesbaccr.com",
+    "bacsanjose.com",            # nombre anterior de BAC
+]
+
+[bancos.BNCR]
+dominios = ["bncr.fi.cr"]
+
+[bancos.Davibank]
+dominios = [
+    "davibank.cr",
+    "scotiabank.com",            # Scotiabank, comprado por Davivienda y renombrado Davibank
+]
+
+# ----------------------------------------------------------------------------
+# Asuntos que no traen movimientos de dinero (seguridad, avisos, encuestas).
+# Se compara en minusculas y basta con que el asunto contenga el texto.
+# ----------------------------------------------------------------------------
+[correos]
+asuntos_ignorados = [
+    "inicio de sesión", "inicio de sesion",
+    "comprobación seguridad", "comprobacion seguridad",
+    "token", "billetera",
+    "actualización exitosa", "actualizacion exitosa",
+    "límite", "limite",
+    "registro de dispositivo",
+    "transferencia fallida",
+    "saldo a favor",
+    "cuéntenos", "cuentenos",
+]
+
+# ----------------------------------------------------------------------------
+# Idioma: meses, monedas y lugares
+# ----------------------------------------------------------------------------
+[idioma]
+# Primeras 3 letras del mes (espanol e ingles) -> numero
+meses = { ene = 1, jan = 1, feb = 2, mar = 3, abr = 4, apr = 4, may = 5, jun = 6, jul = 7, ago = 8, aug = 8, sep = 9, set = 9, oct = 10, nov = 11, dic = 12, dec = 12 }
+
+# Como escriben la moneda en el texto -> codigo ISO
+monedas = { "colones" = "CRC", "dólares" = "USD", "dolares" = "USD", "¢" = "CRC", "₡" = "CRC", "$" = "USD" }
+
+# Textos que el banco pone cuando no sabe el pais (se guardan como vacio)
+paises_vacios = ["pais no definido"]
+
+# ----------------------------------------------------------------------------
+# Palabra del banco ("COMPRA", "DEVOLUCION"...) -> tipo de movimiento.
+# Se revisan en orden: gana la primera regla que tenga una palabra contenida.
+# confianza baja = conviene revisarlo a mano.
+# ----------------------------------------------------------------------------
+# Devolucion va ANTES que compra: "DEVOLUCION DE COMPRA" tambien contiene "compra".
+[[tipos_por_palabra]]
+palabras = ["devol", "revers", "anula", "crédito", "credito"]
+tipo = "devolucion"
+direccion = "entrada"
+confianza = 0.9
+
+[[tipos_por_palabra]]
+palabras = ["compra"]
+tipo = "compra"
+direccion = "salida"
+confianza = 1.0
+
+[[tipos_por_palabra]]
+palabras = ["retiro", "avance"]
+tipo = "retiro_efectivo"
+direccion = "salida"
+confianza = 0.9
+
+# Si ninguna regla aplica
+[tipo_desconocido]
+tipo = "otro"
+direccion = "salida"
+confianza = 0.5
