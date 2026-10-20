@@ -1,0 +1,159 @@
+# Configuracion del reporte de gastos (reporte.py).
+# Se edita sin tocar codigo: cambiar umbrales o agregar palabras a una categoria.
+
+[reporte]
+# Minutos de diferencia para tomar una salida y una entrada del mismo monto en bancos
+# distintos como transferencia entre cuentas propias (no es gasto ni ingreso).
+ventana_transferencia_propia = 30
+# Categorias que se muestran aparte y no se suman al gasto (ej. pagos de tarjeta sin detalle,
+# que ya estan contados como compras).
+excluir_del_gasto = ["Débitos de cuenta"]
+# Una compra cuenta como "hormiga" si cuesta hasta este monto en colones...
+umbral_hormiga = 5000
+# ...y la misma categoria se repite al menos estas veces en el mes.
+min_compras_hormiga = 4
+# Un cobro es "suscripcion" si el mismo comercio aparece en al menos estos meses seguidos
+# con un monto casi igual (variacion maxima en proporcion, 0.15 = 15 %).
+meses_suscripcion = 3
+variacion_suscripcion = 0.15
+# Meses que muestra el grafico de tendencia.
+meses_tendencia = 6
+
+# Colones por unidad de cada moneda, para sumar todo en colones.
+# Actualizar con el tipo de cambio de venta del BCCR.
+[tipos_cambio]
+USD = 505.0
+EUR = 550.0
+JPY = 3.4
+
+# Categorias por tipo de movimiento (se revisan antes que las palabras).
+[categorias_por_tipo]
+sinpe_enviado = "Transferencias"
+retiro_efectivo = "Efectivo"
+debito_cuenta = "Débitos de cuenta"
+
+# Categorias por palabras en el nombre del comercio (sin importar mayusculas ni tildes).
+# Las palabras de 4 letras o menos tienen que aparecer como palabra completa ("UE" no choca con "BUEN").
+# La primera categoria que coincide gana, asi que las mas especificas van primero
+# (ej. "Viajes" va antes de "Combustible" para que la aerolinea Delta no cuente como gasolinera).
+[[categorias]]
+nombre = "Comida a domicilio"
+palabras = ["UBER EATS", "UBEREATS", "UE", "RAPPI", "PEDIDOSYA", "DIDI FOOD"]
+
+[[categorias]]
+nombre = "Transporte por app"
+palabras = ["UBER", "UBR", "DIDI", "INDRIVE", "LYFT", "CABIFY"]
+
+[[categorias]]
+nombre = "Peajes, parqueo y transporte público"
+palabras = ["PARQUEO", "PARKING", "PARQUIMETRO", "PEAJE", "QUICKPASS", "GLOBALVIA", "GLOBAL VIA", "VENTRA",
+            "METRA", "SUICA", "JR EAST", "JR WEST", "JR CENTRAL", "MTA", "TREN"]
+
+[[categorias]]
+nombre = "Suscripciones"
+palabras = ["NETFLIX", "SPOTIFY", "APPLE.COM", "ITUNES", "GOOGLE", "YOUTUBE", "DISNEY", "HBO", "MAX.COM",
+            "PRIME VIDEO", "AMAZON PRIME", "OPENAI", "CHATGPT", "ANTHROPIC", "CLAUDE", "MICROSOFT", "ADOBE",
+            "PLAYSTATION", "XBOX", "STEAM", "CRUNCHYROLL", "ICLOUD"]
+
+[[categorias]]
+nombre = "Viajes"
+palabras = ["AIRLINES", "AIRWAYS", "AMERICAN AIR", "COPA AIR", "COPA", "AVIANCA", "SOUTHWES", "UNITED",
+            "DELTA AIR", "DELTA 00", "HOTEL", "AIRBNB", "BOOKING", "EXPEDIA", "AEROPUERTO", "AIRPORT"]
+
+[[categorias]]
+nombre = "Vitaminas y suplementos"
+palabras = ["AMWAY", "GNC", "HERBALIFE", "VITAMINA", "SUPLEMENTO"]
+
+[[categorias]]
+nombre = "Supermercado"
+palabras = ["AUTOMERCADO", "AUTO MERCADO", "MAS X MENOS", "MASXMENOS", "WALMART", "WAL-MART", "PALI",
+            "MEGASUPER", "FRESH MARKET", "PRICESMART", "PRICE SMART", "SUPER", "PERIMERCADOS", "VINDI", "AMPM",
+            "AM PM", "MAXIPALI", "TARGET", "MITSUWA", "COOPEATENAS", "MERCADO", "MARKET", "PUBLIX", "OXXO",
+            "D1", "PROXIMART", "PULPERIA", "JEWEL OSCO"]
+
+[[categorias]]
+nombre = "Café y panadería"
+palabras = ["STARBUCKS", "CAFE", "COFFEE", "BRITT", "SPOON", "SAINT HONORE", "TOSTADOR", "MUSMANNI",
+            "PANADERIA", "KRISPY", "DONUT", "AMORINO", "BAKERY", "BREAD", "JUAN VALDEZ", "HELADERIA", "HAAGEN",
+            "CINNABON", "POPS"]
+
+[[categorias]]
+nombre = "Restaurantes y comida rápida"
+palabras = ["MCDONALDS", "MC DONALDS", "MCDONALD", "KFC", "SUBWAY", "BURGER", "PIZZA", "TACO", "RESTAURANT",
+            "SODA", "WENDYS", "CHURCHS", "POLLO", "SUSHI", "BAR", "COMEDOR", "FOOD", "GRILL", "KITCHEN",
+            "CHILIS", "HUARACHES", "SATAY", "TST", "CARLS JR", "FRISBY", "CHICK-FIL", "JOHNNY ROCKETS",
+            "PAPA JOHNS", "SHAWARMA", "KEBAB", "TRATTORIA", "HAMBUR", "GYROS", "NOODLES", "CHILI'S",
+            "OUTBACK", "ITALIAN"]
+
+[[categorias]]
+nombre = "Licores"
+palabras = ["LICORERA", "LICORES", "LICOR"]
+
+[[categorias]]
+nombre = "Combustible"
+palabras = ["SERVICENTRO", "GASOLINERA", "DELTA", "ESTACION DE SERVICIO", "ESTACION DE SERV", "UNO", "PUMA",
+            "GAZEL", "LOVES", "SHELL", "EXXON", "CHEVRON"]
+
+[[categorias]]
+nombre = "Vehículo y seguros"
+palabras = ["MARCHAMO", "RITEVE", "DEKRA", "SEGURO", "INS", "TALLER", "LLANTA", "AUTOMOTRIZ", "REPUESTO",
+            "LAVACAR", "CAR WASH", "COMPRESOR", "MULTAS"]
+
+[[categorias]]
+nombre = "Salud"
+palabras = ["FARMACIA", "FARMA", "PHARMACY", "CVS", "WALGREENS", "FISCHEL", "SUCRE", "CLINICA", "HOSPITAL",
+            "LABORATORIO", "LABIN", "OPTICA", "DENTAL", "ODONTO", "DROGUERIA", "MEDIC", "DR", "DRA"]
+
+[[categorias]]
+nombre = "Cuidado personal"
+palabras = ["BARBER", "BARBERIA", "PELUQUERIA", "ESTETICA", "CORTE DE PELO", "SALON DE BELLEZA", "SPA",
+            "PERFUME"]
+
+[[categorias]]
+nombre = "Educación y deporte"
+palabras = ["GYM", "GIMNASIO", "SMART FIT", "FITNESS", "NATACION", "CURSO", "CLASES", "ACADEMIA", "SAXOFON",
+            "GUITARRA", "PADEL"]
+
+[[categorias]]
+nombre = "Iglesia y donaciones"
+palabras = ["IGLESIA", "DIEZMO", "OFRENDA", "PROTEMPLO", "TEMPLO"]
+
+[[categorias]]
+nombre = "Servicios del hogar"
+palabras = ["KOLBI", "ICE", "CNFL", "ACUEDUCTOS", "TIGO", "CLARO", "LIBERTY", "TELECABLE", "CABLETICA", "ESPH"]
+
+[[categorias]]
+nombre = "Hogar y ferretería"
+palabras = ["FERRETERIA", "EPA", "CONSTRUPLAZA", "PEQUENO MUNDO", "LAUNDRY", "IKEA", "HOME DEPOT", "LIMPIEZA",
+            "CLEAN", "DOLLARCITY"]
+
+[[categorias]]
+nombre = "Tecnología"
+palabras = ["BEST BUY", "SAMSUNG", "RADIOSHACK", "ICON", "APPLE STORE", "GOLLO", "MONGE", "INTELEC"]
+
+[[categorias]]
+nombre = "Ropa y tiendas"
+palabras = ["ROSS", "COACH", "BURLINGTON", "T J MAXX", "TJ MAXX", "MARSHALLS", "PRIMARK", "BERSHKA",
+            "PULL AND BEAR", "ZARA", "H&M", "NIKE", "ADIDAS", "EXPRESS", "ALUPA", "EKONO", "OUTLET",
+            "FACTORY STORE", "BARNES", "DECATHLON", "SEPHORA", "LIBRERIA", "OFFICE DEPOT", "UNIQLO", "KOAJ",
+            "DOLLAR TREE", "FIVE BELOW", "MINISO", "BEAUTY"]
+
+[[categorias]]
+nombre = "Compras en línea"
+palabras = ["AMAZON", "AMZN", "ASOS", "ALIEXPRESS", "TEMU", "SHEIN", "EBAY", "PAYPAL"]
+
+[[categorias]]
+nombre = "Entretenimiento"
+palabras = ["ESTADIO", "SUMMIT", "PLANETARIUM", "NAVY PIER", "MUSEUM", "MUSEO", "CINE", "CINEMA", "TICKET",
+            "TEATRO", "CONCIERTO", "PARK", "PARQUE DIVERSIONES", "MULTIPLEX"]
+
+# Grupos para leer el gasto de un vistazo. Cada categoria va en un solo grupo;
+# las que no aparecen aqui caen en "Por revisar".
+[grupos]
+"Necesidades" = ["Supermercado", "Combustible", "Peajes, parqueo y transporte público", "Salud",
+                 "Vehículo y seguros", "Servicios del hogar", "Cuidado personal"]
+"Gustos" = ["Restaurantes y comida rápida", "Café y panadería", "Comida a domicilio", "Licores", "Ropa y tiendas",
+            "Entretenimiento", "Tecnología", "Compras en línea", "Transporte por app"]
+"Compromisos mensuales" = ["Suscripciones", "Educación y deporte", "Vitaminas y suplementos"]
+"Iglesia y donaciones" = ["Iglesia y donaciones"]
+"Grandes y únicos" = ["Viajes", "Hogar y ferretería"]
