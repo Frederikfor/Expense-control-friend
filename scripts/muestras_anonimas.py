@@ -3,7 +3,7 @@ Saca ejemplos de cada tipo de correo de cada banco, con los datos personales
 tapados, para poder escribir los lectores (extractores) de cada banco.
 
 Uso:
-    python muestras_anonimas.py --salida "C:\\ruta\\a\\datos" --ocultar "Frederik,Apellido1,Apellido2"
+    python muestras_anonimas.py --salida "C:\\ruta\\a\\datos" --ocultar "Nombre,Apellido1,Apellido2"
 
 Genera muestras.txt dentro de una carpeta nueva de esta corrida. Revisalo
 antes de compartirlo: los numeros se cambian por 9 (se conserva el formato,
